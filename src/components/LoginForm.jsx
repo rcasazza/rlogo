@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../lib/axios';
 import { log } from '../utils/logger';
 
@@ -21,16 +21,14 @@ const LoginForm = () => {
 
       // Handle login logic here
       try {
-        const res = await api.post('http://localhost:3000/api/login', {
+        const res = await api.post('/api/login', {
           userName,
           password,
         });
 
-        if (res.data?.token) {
-          // Store access token
-          localStorage.setItem('accessToken', res.data.token);
-
-          // Redirect to main app
+        if (res.data?.accessToken) {
+          localStorage.setItem('accessToken', res.data.accessToken);
+          localStorage.setItem('refreshToken', res.data.refreshToken);
           navigate('/');
         } else {
           setError('Unexpected response from server.');
@@ -136,6 +134,12 @@ const LoginForm = () => {
               Log In
             </button>
           </fieldset>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-blue-600 hover:underline">
+              Register now
+            </Link>
+          </p>
         </form>
       </main>
     </div>
